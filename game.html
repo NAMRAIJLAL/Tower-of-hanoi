@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tower of Hanoi!</title>
+    <script type="text/javascript" src="JQuery.min.js"></script>
+    <script src="jquery-ui/jquery-ui.js"></script>
+        <link href="jquery-ui/jquery-ui.css" rel="stylesheet">
 </head>
 <style>
     .T_background{
@@ -12,10 +15,10 @@
         flex-direction: row;
     }
     .T{
-        height: 150px;
+        height: 150px ;; 
         justify-items: end;
         margin-top: 100px;
-        margin-left: 200px;
+        margin-left: 150px;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -25,7 +28,7 @@
     }
     .T::after{
         content: "";
-        position: absolute;
+        position: absolute ;
         background-color:rgb(173, 109, 80);
         height: 150px;
         width: 10px;
@@ -34,12 +37,15 @@
 
     #t1{
          left: 100px;
+         width: 100px;
      }
      #t2{
          left: 300px;
+         width: 100px;
      }
      #t3{
          left: 500px;
+         width: 100px;
      }
     .horizental_line{
         background-color: rgb(173, 109, 80);
@@ -81,20 +87,20 @@
     }
 </style>
 <body>
-    <div class="T_background">
+    <div class="T_background ">
         <div class="T" id="t1">
-            <!-- <div class="vertical-line" id="h-line1"></div> -->
-            <div class="ring" id="ring_1" draggable='true' ></div>
-            <div class="ring" id="ring_2" draggable='false'></div>
-            <div class="ring" id="ring_3" draggable='false' ></div>  
+            
+            <div class="ring" id="ring_1"  ></div>
+            <div class="ring" id="ring_2" ></div>
+            <div class="ring" id="ring_3"  ></div>  
         </div> 
         
-        <div class="T" id="t2"  >    
-            <!-- <div class="vertical-line" id="h-line2"></div> -->
+        <div class="T" id="t2"  >  
+            
         </div>
 
         <div class="T" id="t3" >
-            <!-- <div class="vertical-line" id="h-line3"></div> -->
+          
         </div>
     </div>
     <div class="horizental_line"></div>
@@ -109,28 +115,38 @@
         var dropPreviousRingId="";
         var dragRing="";
         var dropTower="";
-        document.addEventListener("drag", function(event) {
-            event.preventDefault();
-            dragEventInitialization(event);
+        $(document).ready(function(){
+            $( function() {
+                $( ".ring" ).draggable({
+                    snap: true,
+                    start: function( event, ui ) {
+                        dragTowerId=($(this).parent().attr('id'));
+                        dragEventInitialization(event);
+                      
+                    }
+                });
+            });
+            $( function() {
+                $(".T" ).droppable({
+                    drop: function( event, ui ) {
+                        dropEventInitialization(event);
+                        $("#"+dragRingId).css("position","unset");
+                        if(appendFunction()){
+                            $("#"+dropTowerId).prepend($("#"+dragRingId));
+                        }
+                    }
+                    });
+                    
+            });
         });
-        document.addEventListener("dragover", function(event) {
-            event.preventDefault();
-        });
-        document.addEventListener("drop", function(event){
-            event.preventDefault();
-            dropEventInitialization(event);
-            if(appendFunction()){
-                dropTower.prepend(document.getElementById(dragRingid));
-            }                        
-        });
+
         function dragEventInitialization(event){
-            dragRing=event.srcElement;
-            dragTowerId=dragRing.parentElement.id;
-            dragRingid=dragRing.id; 
+          
+            dragRingId=event.target.id; 
         }
         function dropEventInitialization(event){
-            dropTower=event.path[0];
-            dropTowerId=dropTower.id;
+            dropTowerId=event.target.id;
+           // console.log(dropTowerId);
         }
         function MapTower(dragTowerId){
             if(dragTowerId === "t1"){
@@ -142,9 +158,10 @@
             if(dragTowerId === "t3"){
                 return t3;
             }
+           
         }
-        function manageArray(dragTowerId,dropTowerId){
-            var dragTowerArray = MapTower(dragTowerId);
+        function manageArray(dragTowerId,dropTowerId){    
+            var dragTowerArray =MapTower(dragTowerId);
             var ring=dragTowerArray.pop();
             var dropTowerArray=MapTower(dropTowerId);
             dropTowerArray.push(ring);
@@ -156,32 +173,35 @@
                return true;
             }  
             else if(dragRingIdNum < droptowerArray[droptowerArray.length-1]){
-               document.getElementById("text").innerHTML="";
+              $("#text").innerHTML="";
                 return true;
             }
             else{
-               document.getElementById("text").innerHTML="Wrong Movement!";
+                $("#text").innerHTML="Wrong Movement!";
                 console.log("Wrong Movement!");
                 return false;
             }
         }
-        function DragOrNot(dragTowerId,dragRingid,dropTowerId){           
+       
+        function DragOrNot(dragTowerId,dragRingId,dropTowerId){         
             var dragtowerArray =MapTower(dragTowerId);
             var dropTowerArray=MapTower(dropTowerId);
-            var dragRingIdNum=dragRingid.split("_")[1];
-            console.log(dragRingIdNum);
+            var dragRingIdNum=dragRingId.split("_")[1];
+            console.log(dragRingIdNum+"  dragRingIdNum");
             if(dragtowerArray[dragtowerArray.length-1]==dragRingIdNum){
-                document.getElementById("text").innerHTML="";
+                $("#text").innerHTML="";
                 return true;
             }
             else{
-                document.getElementById("text").innerHTML="Wrong Movement!";
+                $("#text").innerHTML="Wrong Movement!";
+                console.log("Wrong Movement!");
                 return false;
             }
         }
+
         function appendFunction()
         {
-            if ( dropTowerId && dropOrNot(dragRingid,dropTowerId) && DragOrNot(dragTowerId,dragRingid,dropTowerId)) {
+            if ( dropTowerId && dropOrNot(dragRingId,dropTowerId) && DragOrNot(dragTowerId,dragRingId,dropTowerId)) { 
                 manageArray(dragTowerId,dropTowerId);
                 return true;
            }
